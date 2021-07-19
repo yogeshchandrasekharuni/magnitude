@@ -1198,7 +1198,7 @@ class Magnitude(object):
     @lru_cache(DEFAULT_LRU_CACHE_SIZE, ignore_unhashable_args=True)
     def query(self, q, pad_to_length=None,
               pad_left=None, truncate_left=None,
-              normalized=None):
+              normalized=None, strict = False):
         """Handles a query of keys which could be a single key, a
         1-D list of keys, or a 2-D list of keys.
         """
@@ -1210,6 +1210,8 @@ class Magnitude(object):
         if not isinstance(q, list):  # Single key
             vec = self._vector_for_key_cached(q, normalized)
             if vec is None:
+                if strict:
+                    raise KeyError('Query not available in vocabulary.')
                 return self._out_of_vocab_vector_cached(q, normalized)
             else:
                 return vec
